@@ -4,6 +4,10 @@ let generateSpinner = document.getElementById("generate-spinner");
 let progress = document.getElementById("progress");
 let messages = document.getElementById("messages");
 
+let spinX = document.getElementById("spin-x");
+let spinY = document.getElementById("spin-y");
+let spinZ = document.getElementById("spin-z");
+
 let image = new Image();
 image.src = "../img/cube.png";
 let texture = new THREE.Texture(image);
@@ -82,6 +86,8 @@ generateSpinner.addEventListener("click", async (e) => {
     link.href = URL.createObjectURL(blob);
     link.download = "spinny.gif";
     link.dispatchEvent(new MouseEvent("click"));
+
+    window.location.reload();
 });
 
 // setup
@@ -99,8 +105,10 @@ renderer.setClearColor(0xffffff, 1);
 renderer.setSize(400, 400);
 
 function render(progress) {
-    mesh.rotation.x = progress * Math.PI * 2;
-    mesh.rotation.y = -progress * Math.PI * 2;
+    // DOM read is faster than write, so this is ok
+    if(spinX.checked) mesh.rotation.x = progress * Math.PI * 2;
+    if(spinY.checked) mesh.rotation.y = progress * Math.PI * 2;
+    if(spinZ.checked) mesh.rotation.z = progress * Math.PI * 2;
 
     renderer.render(scene, camera);
 }
