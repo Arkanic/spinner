@@ -2,12 +2,21 @@ let spinnerCanvas = document.getElementById("spinner-canvas");
 let imageUpload = document.getElementById("image-upload");
 let generateSpinner = document.getElementById("generate-spinner");
 let progress = document.getElementById("progress");
+let messages = document.getElementById("messages");
 
 let image = new Image();
 image.src = "../img/cube.png";
 let texture = new THREE.Texture(image);
 image.addEventListener("load", () => {
     texture.needsUpdate = true;
+});
+
+console.lhandlers.push(() => {
+    let m = "";
+    for(let i = console.logs.length - 1; i > console.logs.length - 11; i--) {
+        m += `<p>${console.logs[i]}</p>`;
+    }
+    messages.innerHTML = m;
 });
 
 let imageLoadedPromise = new Promise(resolve => {
@@ -32,54 +41,33 @@ function mapr(value, a, b, c, d) {
 function generateGif(elem, renderFunction, duration=1, fps=30) {
     let frames = duration * fps;
 
-    let canvas = document.createElement("canvas");
-    canvas.width = elem.width;
-    canvas.height = elem.height;
-    let ctx = canvas.getContext("2d");
+    let capturer = new CCapture({
+        format: "gif",
+        workersPath: "/js/",
+        framerate: fps,
+        verbose: true
+    });
 
-    let buffer = new Uint8Array(canvas.width * canvas.height * frames * 5);
-    let pixels = new Uint8Array(canvas.width * canvas.height);
-    let writer = new GifWriter(buffer, canvas.width, canvas.height, {loop: 0});
+    capturer.start();
 
     let now = 0;
 
     return new Promise(async function addFrame(resolve)  {
         renderFunction(now / frames);
 
-        ctx.drawImage(elem, 0, 0);
-        let data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-        let palette = [];
+        await capturer.capture(elem);
 
-        for(let j = 0, k = 0, jl = data.length; j < jl; j += 4, k++) {
-            let rgb = [
-                Math.floor(mapr(Math.floor(data[j] * 0.1) * 10, 0, 255, 0, 6)),
-                Math.floor(mapr(Math.floor(data[j + 1] * 0.1) * 10, 0, 255, 0, 6)),
-                Math.floor(mapr(Math.floor(data[j + 2] * 0.1) * 10, 0, 255, 0, 2))
-            ];
-            let color = mapr(rgb[0], 0, 6, 0, 255) << 16 | mapr(rgb[1], 0, 6, 0, 255) << 8 | mapr(rgb[2], 0, 2, 0, 255) << 0;
-
-            let index = palette.indexOf(color);
-            if(index === -1) {
-                pixels[k] = palette.length;
-                palette.push(color);
-            } else {
-                pixels[k] = index;
-            }
-        }
-
-        let powof2 = 1;
-        while(powof2 < palette.length) powof2 <<= 1;
-        palette.length = powof2;
-
-        let delay = 100 / fps;
-        let options = {palette: new Uint32Array(palette), delay};
-        writer.addFrame(0, 0, canvas.width, canvas.height, pixels, options);
-
-        now++;
         progress.value = now / frames;
+        now++;
 
-        if(now < frames) await setTimeout(addFrame, 0, resolve);
-        else resolve(buffer.subarray(0, writer.end()));
+        if(now < frames) await setTimeout(() => {
+            addFrame(resolve);
+        }, 0);
+        else {
+            capturer.save((blob) => {
+                resolve(blob);
+            });
+        }
     });
 }
 

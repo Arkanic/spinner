@@ -5,9 +5,26 @@
 
         <link rel="stylesheet" type="text/css" href="css/style.css">
 
-        <script src="https://cdn.jsdelivr.net/npm/omggif@1.0.9/omggif.js"></script>
+        <script src="https://cdn.jsdelivr.net/gh/spite/ccapture.js@master/build/CCapture.all.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/three-js@79.0.0/three.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.js"></script>
+
+        <script>
+            // this exists because ccapture doesn't have a way
+            // to re-route the verbose log messages, as well as
+            // not having a way to show how close it is to finishing
+            // rendering through the api.
+            console.stdlog = console.log.bind(console);
+            console.logs = [];
+            console.lhandlers = [];
+            console.log = function(){
+                console.logs.push(Array.from(arguments));
+                console.stdlog.apply(console, arguments);
+
+                for(let i in console.lhandlers) {
+                    console.lhandlers[i]();
+                }
+            }
+        </script>
     </head>
     <body>
         <canvas id="spinner-canvas"></canvas>
@@ -15,6 +32,7 @@
         <input id="image-upload" type="file">
         <button id="generate-spinner">Generate</button>
         <progress id="progress" value="0" max="1" style="display:none"></progress>
+        <div id="messages"></div>
 
         <script src="js/spinner.js"></script>
     </body>
