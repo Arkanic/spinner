@@ -24,6 +24,11 @@ let imageLoadedPromise = new Promise(resolve => {
     });
 });
 
+function mapr(value, a, b, c, d) {
+    value = (value - a) / (b - a);
+    return c + value * (d - c);
+}
+
 function generateGif(elem, renderFunction, duration=1, fps=30) {
     let frames = duration * fps;
 
@@ -47,11 +52,11 @@ function generateGif(elem, renderFunction, duration=1, fps=30) {
 
         for(let j = 0, k = 0, jl = data.length; j < jl; j += 4, k++) {
             let rgb = [
-                Math.floor(data[j] * 0.1) * 10,
-                Math.floor(data[j + 1] * 0.1) * 10,
-                Math.floor(data[j + 2] * 0.1) * 10
+                Math.floor(mapr(Math.floor(data[j] * 0.1) * 10, 0, 255, 0, 6)),
+                Math.floor(mapr(Math.floor(data[j + 1] * 0.1) * 10, 0, 255, 0, 6)),
+                Math.floor(mapr(Math.floor(data[j + 2] * 0.1) * 10, 0, 255, 0, 2))
             ];
-            let color = rgb[0] << 16 | rgb[1] << 8 | rgb[2] << 0;
+            let color = mapr(rgb[0], 0, 6, 0, 255) << 16 | mapr(rgb[1], 0, 6, 0, 255) << 8 | mapr(rgb[2], 0, 2, 0, 255) << 0;
 
             let index = palette.indexOf(color);
             if(index === -1) {
