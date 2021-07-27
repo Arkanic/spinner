@@ -14,7 +14,7 @@ image.addEventListener("load", () => {
 console.lhandlers.push(() => {
     let m = "";
     for(let i = console.logs.length - 1; i > console.logs.length - 11; i--) {
-        m += `<p>${console.logs[i]}</p>`;
+        m += `<p>${console.logs[i] || ""}</p>`;
     }
     messages.innerHTML = m;
 });
