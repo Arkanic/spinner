@@ -2,7 +2,6 @@ let spinnerCanvas = document.getElementById("spinner-canvas");
 let imageUpload = document.getElementById("image-upload");
 let generateSpinner = document.getElementById("generate-spinner");
 let progress = document.getElementById("progress");
-let messages = document.getElementById("messages");
 
 let spinX = document.getElementById("spin-x");
 let spinY = document.getElementById("spin-y");
@@ -13,14 +12,6 @@ image.src = "../img/cube.png";
 let texture = new THREE.Texture(image);
 image.addEventListener("load", () => {
     texture.needsUpdate = true;
-});
-
-console.lhandlers.push(() => {
-    let m = "";
-    for(let i = console.logs.length - 1; i > console.logs.length - 11; i--) {
-        m += `<p>${console.logs[i] || ""}</p>`;
-    }
-    messages.innerHTML = m;
 });
 
 let imageLoadedPromise = new Promise(resolve => {
@@ -100,7 +91,7 @@ let material = new THREE.MeshBasicMaterial({map:texture});
 let mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
-let renderer = new THREE.WebGLRenderer({canvas:spinnerCanvas});
+let renderer = new THREE.WebGLRenderer({canvas: spinnerCanvas, alpha: true});
 renderer.setClearColor(0xffffff, 1);
 renderer.setSize(400, 400);
 
