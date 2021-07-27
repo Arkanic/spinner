@@ -1,0 +1,23 @@
+{
+  "name": "spinner",
+  "version": "1.0.0",
+  "description": "make those funky rotating cube gifs",
+  "main": "src/host.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/host.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arkanic/spinner.git"
+  },
+  "author": "Arkanic",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arkanic/spinner/issues"
+  },
+  "homepage": "https://github.com/Arkanic/spinner#readme",
+  "devDependencies": {
+    "express": "^4.17.1"
+  }
+}
